@@ -9,7 +9,6 @@ export default function Home() {
   const [search_terms, setSearchTerms] = React.useState("React");
   const [results, setResults] = React.useState([]);
   const apiKey = "AIzaSyA3bJrsoaW28rHNwTOb22JKk9WiomM1Qqo";
-  let boolResults = false;
 
   function handleChange(event){
     // Get text in search bar
@@ -22,14 +21,14 @@ export default function Home() {
     event.preventDefault()
 
     // Get info from Google Books
-    axios.get("https://www.googleapis.com/books/v1/volumes?q=" + search_terms + "&maxResults=3&key=" + apiKey,
+    axios.get(`https://www.googleapis.com/books/v1/volumes?q=${search_terms}&maxResults=3&key=${apiKey}`,
       {validateStatus: function(status){
         return status < 500; // Reject if the status code is less than 500
       }, 
     })
-    .then(data => {
-      setResults(data.data.items)
-      console.log(results)
+    // Set results if found. Otherwise, set to "null".
+    .then( (data) => {
+      setResults(data?.data?.items || [null])
     })
     .catch((error) => {
       console.error(error);
@@ -59,7 +58,7 @@ export default function Home() {
               type="text" 
               required
               minLength="1"
-              placeholder='React'
+              placeholder="Search"
               id="search"
               onChange={handleChange}
           /><br />
