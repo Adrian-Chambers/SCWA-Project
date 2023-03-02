@@ -5,6 +5,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  width: 100%;
 }
 
 .title a {
@@ -85,7 +86,7 @@
 
 /* Search */
 .search{
-  width: 100%;
+  min-width: 60vw;
 }
 
 .search input{
@@ -113,20 +114,14 @@
 
 .results{
   margin-top: 20px;
-  width: 100%;
-  flex-basis: 45%;
-  text-align: left;
-  color: inherit;
-  text-decoration: none;
   border: 1px solid #eaeaea;
   border-radius: 10px;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  width: 60vw;
 }
 
 .resultsHeader{
   border-bottom: 2px solid;
   display: flex;
-  width: 100%;
 }
 
 .headerItem{
