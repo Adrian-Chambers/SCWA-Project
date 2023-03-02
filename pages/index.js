@@ -1,7 +1,41 @@
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
+import React from 'react';
+import axios from 'axios'
+import Book from "./book.js"
 
 export default function Home() {
+
+  const [search_terms, setSearchTerms] = React.useState("React");
+  const [results, setResults] = React.useState([]);
+  const apiKey = "AIzaSyA3bJrsoaW28rHNwTOb22JKk9WiomM1Qqo";
+  let boolResults = false;
+
+  function handleChange(event){
+    // Get text in search bar
+    const value = event.target.value;
+    setSearchTerms(value);
+  }
+
+  function handleSubmit(event){
+    // Prevent default redirect behavior
+    event.preventDefault()
+
+    // Get info from Google Books
+    axios.get("https://www.googleapis.com/books/v1/volumes?q=" + search_terms + "&maxResults=3&key=" + apiKey,
+      {validateStatus: function(status){
+        return status < 500; // Reject if the status code is less than 500
+      }, 
+    })
+    .then(data => {
+      setResults(data.data.items)
+      console.log(results)
+    })
+    .catch((error) => {
+      console.error(error);
+    })
+  }
+  
   return (
     <div className={styles.container}>
       <Head>
@@ -18,35 +52,33 @@ export default function Home() {
           Get started by editing <code>pages/index.js</code>
         </p>
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+        <div className={styles.search}>
+          <form onSubmit={handleSubmit}>
+          <label htmlFor="search">Search Terms</label><br />
+          <input 
+              type="text" 
+              required
+              minLength="1"
+              placeholder='React'
+              id="search"
+              onChange={handleChange}
+          /><br />
+          <button type="submit">Search Books</button>
+          </form>
         </div>
+
+        <div className={styles.results}>
+          <div className={styles.resultsHeader}>
+            <p className={styles.headerItem}>Title</p>
+            <p className={styles.headerItem}>Subtitle</p>
+            <p className={styles.headerItem}>Author</p>
+            <p className={styles.headerItem}>Thumbnail</p>
+          </div>
+          {results.map(b =>(
+            <Book book={b}></Book>
+          ))}
+        </div>
+
       </main>
 
       <footer>
@@ -110,6 +142,9 @@ export default function Home() {
           box-sizing: border-box;
         }
       `}</style>
+
+
     </div>
+    
   )
 }
